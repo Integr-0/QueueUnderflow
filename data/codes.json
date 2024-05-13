@@ -1,0 +1,10 @@
+[
+  {
+    "creation": 1715597549798,
+    "email": "adggaz@a.com",
+    "verificationCode": 2318,
+    "hashedPass": "2f984fede2a6a513783f144f9476bb8c4051f567674b0f0486d97cd48fdb995e2e6778ec9e20fa7ee1cdfa71c43c52b93fd2728ed6d3fb3ddcd60a0c12c4337d",
+    "salt": "e2a13bdfaf5f77ad22b48e2959ffcd0da7e5ba5caf40c4d8c46522c996f5781939de69ea98ada9653f85fc8412fb50e2aa0d34c2c073efe43a619a76f6fbe557",
+    "username": "Eik"
+  }
+]

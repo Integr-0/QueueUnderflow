@@ -1,0 +1,37 @@
+.center {
+    text-align: center;
+    font-family: "Arial", serif;
+    color: aliceblue;
+}
+
+.left {
+    text-align: left;
+    font-family: "Arial", serif;
+    color: aliceblue;
+    margin-left: 20px;
+}
+
+.top_container {
+    background-color: rgba(225, 225, 217, 0.11);
+    padding: 20px;
+    border-radius: 35px;
+    border-color: #4f4f4f;
+    border-width: 1px;
+    width: fit-content;
+    border-style: solid;
+    margin: 20% auto auto;
+}
+
+.title_container {
+    background-color: rgba(225, 225, 217, 0.11);
+    width: 100%;
+    border-radius: 35px;
+    border-color: #4f4f4f;
+    border-style: solid;
+    border-width: 1px;
+}
+
+html {
+    background: linear-gradient(to bottom right, #141b26 , #1f2f44);
+    height: 100%;
+}
