@@ -1,5 +1,6 @@
 package net.integr.email
 
+import net.integr.config.ConfigStorage
 import org.apache.commons.mail.DefaultAuthenticator
 import org.apache.commons.mail.SimpleEmail
 import kotlin.random.Random
@@ -11,11 +12,11 @@ class EmailService {
 
             email.hostName = "smtp.googlemail.com"
             email.setSmtpPort(465)
-            email.setAuthenticator(DefaultAuthenticator("user", "password"))
+            email.setAuthenticator(DefaultAuthenticator(ConfigStorage.INSTANCE!!.emailUsername, ConfigStorage.INSTANCE!!.emailPassword))
             email.isSSLOnConnect = true
-            email.setFrom("user@gmail.com")
+            email.setFrom(ConfigStorage.INSTANCE!!.email)
             email.subject = "Queue Underflow verification code"
-            email.setMsg(code.toString())
+            email.setMsg(code)
             email.addTo(address)
             email.send()
         }

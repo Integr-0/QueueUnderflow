@@ -1,24 +1,14 @@
 [
   {
     "username": "Erik",
-    "email": "adgzfgz@a.com",
-    "passwordHash": "b1c28010b75347ca23bd4d7a1e2f406cdd2870bc2a49d0620de40a9bd6e4060e858207918b9c17fb5fba62bcb85746bbe9207764a1991c3512e6b43f73118167",
-    "salt": "8a1df902727b255c0ee6e41cf34d37430f54664414827d06b51344ce5c65cf4f20ca902f604edd50ff3308a7af508ca2c3201ce53b8dc7d5749beb1e02f3a03f",
+    "email": "erik@gmail.com",
+    "passwordHash": "b222a74fa67ce0a577cdbcad987793993b0978ed7256958836a694555bd53faea5e314bf3712f10bcb5acac5807730b54610c5d0457d10c5874aadc49eda0ea3",
+    "salt": "bfae939ec0508bc70bbae4441a681e73e2f8335e1cf8ef35a5b19ab5f58eac41cf95b721471877918f38d6fea1a92a75b99989524906a6d6438e1484de288846",
     "user": {
-      "id": 81122887363,
+      "id": 24474010458,
       "displayName": "Erik",
-      "creationTime": 1715597023050
-    }
-  },
-  {
-    "username": "Erika",
-    "email": "adgzfgaz@a.com",
-    "passwordHash": "f684ab8e1e20774595411cd2809f5eee2e7a08e324c3d282d44d2566605c42e97b288fb0912ccc8f211dca08f8f59273feb89a4a470a6182d7ad8e3aa319ba18",
-    "salt": "db5d6211905fd806de0ab4e6f7ea2079eede40bd57ca35652928590871ad2e27bd1d08f44c35a2dfa51da08807c587b9250b07f12fa4e054a142de6740766c58",
-    "user": {
-      "id": 98387057762,
-      "displayName": "Erika",
-      "creationTime": 1715597065127
-    }
+      "creationTime": 1715614312467
+    },
+    "isAdmin": true
   }
 ]

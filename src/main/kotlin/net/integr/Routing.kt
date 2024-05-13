@@ -8,42 +8,44 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
+import net.integr.config.ConfigStorage
 import net.integr.cookie.UserSession
-import net.integr.data.userstorage.ServerUser
-import net.integr.data.requests.LoginData
-import net.integr.data.requests.SignupData
-import net.integr.data.userstorage.UserStorage
-import net.integr.data.webdata.User
+import net.integr.data.requests.*
+import net.integr.data.users.ServerUser
+import net.integr.data.tickets.TicketStorage
+import net.integr.data.users.UserStorage
+import net.integr.data.tickets.extras.Status
+import net.integr.data.tickets.Ticket
+import net.integr.data.tickets.comment.Comment
+import net.integr.data.users.User
 import net.integr.email.CodeStorage
 import net.integr.email.EmailService
 import net.integr.email.EmailVerificationPiece
 import net.integr.encryption.Encryption
+import kotlin.math.max
 
 fun Application.configureRouting() {
     routing {
         staticResources("/", "static")
-        routeLogin()
+
         routeSignup()
         routeVerify()
 
-        get("/users") {
-            call.respond(UserStorage.users)
-        }
+        routeLogin()
+        routeLogout()
+        routeDeleteAccount()
+
+        routeTickets()
+        routePost()
+        routeTicket()
+        routeUser()
+        routeComment()
+        routeDelete()
     }
 }
 
-/**
- * Accepts JSON
- * ```json
- * {
- *  "username": "Erik",
- *  "password": "28d4cd88a9e3c3ed5c075d63ad8ad2a8eb12f589fc607aa6ad11ffe42a28660e56012afaf48d78f387976dc0427cd02f5db285fa707525d2e936ad3eb23fc65f"
- * }
- * ```
- *
- * The password must be an SHA-512 Hash
- */
-@KtorDsl fun Route.routeLogin() {
+@KtorDsl
+fun Route.routeLogin() {
     post("/login") {
         try {
             val loginData = call.receiveNullable<LoginData>()
@@ -58,9 +60,9 @@ fun Application.configureRouting() {
                         val actualPassword = user.passwordHash
 
                         if (enteredPassword == actualPassword) { // Compare the passwords
-                            call.sessions.set(UserSession(user.user)) // Set the cookie
+                            call.sessions.set(UserSession(user.user.id)) // Set the cookie
                             call.respond(HttpStatusCode.OK, "Logged in. Cookie set.")
-                        } else call.respond(HttpStatusCode.Forbidden, "Invalid credentials.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Invalid credentials.")
                     } else call.respond(HttpStatusCode.BadRequest, "Username does not exist.")
                 } else call.respond(HttpStatusCode.BadRequest, "Invalid hash.")
             } else call.respond(HttpStatusCode.BadRequest, "Missing data.")
@@ -70,19 +72,8 @@ fun Application.configureRouting() {
     }
 }
 
-/**
- * Accepts JSON
- * ```json
- * {
- *  "username": "Erik",
- *  "email": "erik@gmail.com",
- *  "password": "28d4cd88a9e3c3ed5c075d63ad8ad2a8eb12f589fc607aa6ad11ffe42a28660e56012afaf48d78f387976dc0427cd02f5db285fa707525d2e936ad3eb23fc65f"
- * }
- * ```
- *
- * The password must be an SHA-512 Hash
- */
-@KtorDsl fun Route.routeSignup() {
+@KtorDsl
+fun Route.routeSignup() {
     post("/signup") {
         try {
             val signupData = call.receiveNullable<SignupData>() // Get the signup json data
@@ -98,7 +89,7 @@ fun Application.configureRouting() {
                             val salt = Encryption.generateSalt() // Generate the salt
                             val hashedPassword = Encryption.hash(enteredPassword + salt) // Hash the password
 
-                            val emailVerify = EmailService.generateVerify("https://jhv8mnnb-8080.euw.devtunnels.ms") // Generate the email verification url
+                            val emailVerify = EmailService.generateVerify(ConfigStorage.INSTANCE!!.mainUrl) // Generate the email verification url
 
                             //EmailService.send(emailVerifyUrl, email) //TODO: Send email instead of printing
 
@@ -116,7 +107,8 @@ fun Application.configureRouting() {
     }
 }
 
-@KtorDsl fun Route.routeVerify() {
+@KtorDsl
+fun Route.routeVerify() {
     get("/verify") {
         val code = call.parameters["code"]
         if (code != null) {
@@ -125,7 +117,7 @@ fun Application.configureRouting() {
 
                 if (savedCode != null) {
                     val user = User(UserStorage.generateID(), savedCode.username, savedCode.creation)
-                    UserStorage.users += ServerUser(savedCode.username, savedCode.email, savedCode.hashedPass, savedCode.salt, user)
+                    UserStorage.users += ServerUser(savedCode.username, savedCode.email, savedCode.hashedPass, savedCode.salt, user, false)
                     CodeStorage.awaiting.remove(savedCode)
                     CodeStorage.save()
                     UserStorage.save()
@@ -135,5 +127,176 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.BadRequest, "Invalid code.")
             }
         } else call.respond(HttpStatusCode.BadRequest, "Missing code.")
+    }
+}
+
+@KtorDsl
+fun Route.routeLogout() {
+    post("/logout") {
+        val account = call.sessions.get<UserSession>()
+
+        if (account != null) {
+            call.sessions.clear<UserSession>()
+            call.respond(HttpStatusCode.OK, "Logged Out.")
+        } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+    }
+}
+
+@KtorDsl
+fun Route.routeDeleteAccount() {
+    post("/delete_account") {
+        val account = call.sessions.get<UserSession>()
+
+        if (account != null) {
+            call.sessions.clear<UserSession>()
+            UserStorage.users.remove(UserStorage.getById(account.activeUID))
+            UserStorage.save()
+            call.respond(HttpStatusCode.OK, "Deleted.")
+        } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+    }
+}
+
+@KtorDsl
+fun Route.routeTickets() {
+    get("/tickets") {
+        val limit = call.parameters["limit"]
+        val offset = call.parameters["offset"]
+        val noCom = call.parameters.contains("nocom")
+
+        if (limit != null) {
+            try {
+                val setLimit = limit.toInt()
+                if (setLimit > 0) {
+                    val tickets: MutableList<Ticket> = mutableListOf()
+                    var os = 0
+                    try {
+                        if (offset != null) os = max(0, offset.toInt())
+                        if (noCom) {
+                            TicketStorage.getAmount(setLimit, os).forEach {
+                                val t = it.displayNoComCopy()
+                                tickets += t
+                            }
+                        } else tickets.addAll(TicketStorage.getAmount(setLimit, os))
+                        call.respond(tickets)
+                    } catch (e: NumberFormatException) {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid offset.")
+                    }
+                } else call.respond(HttpStatusCode.BadRequest, "Invalid limit.")
+            } catch(e: NumberFormatException) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid limit.")
+            }
+        } else call.respond(TicketStorage.getAmount(10, 0))
+    }
+}
+
+@KtorDsl
+fun Route.routeTicket() {
+    get("/tickets/{id}") {
+        val id = call.parameters["id"]
+
+        if (id != null) {
+            try {
+                val setId = id.toLong()
+                val ticket = TicketStorage.getById(setId)
+                if (ticket != null) {
+                    call.respond(ticket)
+                } else call.respond(HttpStatusCode.BadRequest, "Ticket was not found.")
+            } catch (e: NumberFormatException) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+            }
+        } else call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+    }
+}
+
+@KtorDsl
+fun Route.routeUser() {
+    get("/users/{id}") {
+        val id = call.parameters["id"]
+
+        if (id != null) {
+            try {
+                val setId = id.toLong()
+                val user = UserStorage.getById(setId)
+                if (user != null) {
+                    call.respond(user.user)
+                } else call.respond(HttpStatusCode.BadRequest, "User was not found.")
+            } catch (e: NumberFormatException) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+            }
+        } else call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+    }
+}
+
+@KtorDsl
+fun Route.routePost() {
+    post("/post") {
+        val user = call.sessions.get<UserSession>()
+        val creationData = call.receiveNullable<CreateData>()
+
+        if (creationData != null && creationData.title.isNotEmpty() && creationData.body.isNotEmpty()) {
+            if (user != null) {
+                val ticket = Ticket(TicketStorage.generateID(), creationData.title, creationData.body, UserStorage.getById(user.activeUID)!!.user, mutableListOf(), 0, creationData.tags, Status.unsolved, System.currentTimeMillis())
+                TicketStorage.tickets += ticket
+                TicketStorage.save()
+                call.respond(HttpStatusCode.OK, "Ticket created.")
+            } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+        } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+    }
+}
+
+@KtorDsl
+fun Route.routeComment() {
+    post("/comment") {
+        val user = call.sessions.get<UserSession>()
+        val commentData = call.receiveNullable<CommentData>()
+
+        if (commentData != null && commentData.body.isNotEmpty()) {
+            if (user != null) {
+                val searchedItem = TicketStorage.getGlobalByID(commentData.id)
+                if (searchedItem is Ticket) {
+                    if (searchedItem.status != Status.archived) {
+                        searchedItem.comments += Comment(TicketStorage.generateID(), commentData.body, UserStorage.getById(user.activeUID)!!.user, 0, mutableListOf(), searchedItem.id)
+                        call.respond(HttpStatusCode.OK, "Comment created.")
+                        TicketStorage.save()
+                    } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
+                } else if (searchedItem is Comment) {
+                    searchedItem.comments += Comment(TicketStorage.generateID(), commentData.body, UserStorage.getById(user.activeUID)!!.user, 0, mutableListOf(), searchedItem.id)
+                    TicketStorage.save()
+                    call.respond(HttpStatusCode.OK, "Comment created.")
+                } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
+            } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+        } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+    }
+}
+
+@KtorDsl
+fun Route.routeDelete() {
+    post("/delete") {
+        val user = call.sessions.get<UserSession>()
+        val deleteData = call.receiveNullable<DeleteData>()
+
+        if (deleteData != null) {
+            if (user != null) {
+                val searchedItem = TicketStorage.getGlobalByID(deleteData.id)
+                if (searchedItem is Ticket) {
+                    if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                        if (searchedItem.status != Status.archived) {
+                            TicketStorage.tickets.remove(searchedItem)
+                            call.respond(HttpStatusCode.OK, "Comment created.")
+                            TicketStorage.save()
+                        } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
+                    } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
+                } else if (searchedItem is Comment) {
+                    if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                        val v = TicketStorage.getGlobalByID(searchedItem.parent)
+                        if (v is Ticket) {
+                            v.comments.remove(searchedItem)
+                        } else (v as Comment).comments.remove(searchedItem)
+                        TicketStorage.save()
+                    } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
+                    call.respond(HttpStatusCode.OK, "Comment created.")
+                } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
+            } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+        } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
     }
 }

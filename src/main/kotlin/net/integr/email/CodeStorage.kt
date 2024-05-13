@@ -1,8 +1,6 @@
 package net.integr.email
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import net.integr.data.userstorage.ServerUser
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.Path
@@ -16,7 +14,7 @@ class CodeStorage {
             if (!f.exists()) save()
 
             val json = f.readText()
-            awaiting = Gson().fromJson(json, Array<EmailVerificationPiece>::class.java).toMutableList()
+            awaiting = GsonBuilder().setPrettyPrinting().create().fromJson(json, Array<EmailVerificationPiece>::class.java).toMutableList()
         }
 
         fun save() {

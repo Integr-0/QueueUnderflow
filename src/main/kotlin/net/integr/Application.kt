@@ -4,47 +4,60 @@ import io.ktor.http.*
 import io.ktor.serialization.gson.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.html.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.server.tomcat.*
 import io.ktor.util.*
-import kotlinx.html.*
+import net.integr.config.ConfigStorage
 import net.integr.cookie.UserSession
-import net.integr.data.userstorage.UserStorage
+import net.integr.data.tickets.TicketStorage
+import net.integr.data.users.UserStorage
 import net.integr.email.CodeStorage
+import net.integr.email.EmailVerificationPiece
 import kotlin.time.Duration.Companion.seconds
 
+//TODO: Scoring
 fun main() {
     embeddedServer(Tomcat, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
 val codeRemoverThread = Thread {
-    while(true) {
+    while (true) {
         val curr = System.currentTimeMillis()
+
+        val newL: MutableList<EmailVerificationPiece> = mutableListOf()
+        newL.addAll(CodeStorage.awaiting)
 
         for (c in CodeStorage.awaiting) {
             if (curr - c.creation > 1000 * 60) { // 1 Minute
-                CodeStorage.awaiting.remove(c)
-                CodeStorage.save()
+                newL.remove(c)
             }
         }
+
+        if (!newL.containsAll(CodeStorage.awaiting)) {
+            CodeStorage.awaiting = newL
+            CodeStorage.save()
+        }
+
+        Thread.sleep(2000)
     }
 }
 
 fun Application.module() {
-    codeRemoverThread.start()
-
     UserStorage.load()
     CodeStorage.load()
+    TicketStorage.load()
+    ConfigStorage.load()
+
+    codeRemoverThread.start()
 
     install(Sessions) {
-        val secretSignKey = hex("6819b47a326945c1968f45236389")
-        val secretEncryptKey = hex("00112243445566778899aabbccdeeeff")
+        val secretSignKey = hex(ConfigStorage.INSTANCE!!.sessionSignKey)
+        val secretEncryptKey = hex(ConfigStorage.INSTANCE!!.sessionEncryptKey)
 
         cookie<UserSession>("session", SessionStorageMemory()) {
             cookie.secure = true
@@ -63,6 +76,7 @@ fun Application.module() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             call.respondStatusPage(text = "$cause", status = HttpStatusCode.InternalServerError)
+            cause.printStackTrace()
         }
 
         status(HttpStatusCode.TooManyRequests) { call, status ->
@@ -79,35 +93,23 @@ fun Application.module() {
         register(RateLimitName("signup")) {
             rateLimiter(limit = 1, refillPeriod = 120.seconds)
         }
+
+        register(RateLimitName("post")) {
+            rateLimiter(limit = 2, refillPeriod = 120.seconds)
+        }
+
+        register(RateLimitName("comment")) {
+            rateLimiter(limit = 5, refillPeriod = 120.seconds)
+        }
+
+        register(RateLimitName("delete")) {
+            rateLimiter(limit = 1, refillPeriod = 120.seconds)
+        }
     }
 
     configureRouting()
 }
 
 suspend fun ApplicationCall.respondStatusPage(text: String, status: HttpStatusCode = HttpStatusCode.OK) {
-    this.respondHtml(status = status) {
-        head {
-            styleLink("/status_page_style.css")
-
-            script {
-                src = "https://kit.fontawesome.com/0a7e2ccef9.js"
-            }
-        }
-
-        body {
-            div(classes = "title_container") {
-                h1(classes = "left") {
-                    +"Queue Underflow"
-                }
-            }
-
-            div(classes = "top_container") {
-                h1(classes = "center") {
-                    i("fa-solid fa-xmark")
-
-                    +" ${status.value} - $text"
-                }
-            }
-        }
-    }
+    this.respondText("${status.value}: $text", status = status)
 }

@@ -1,4 +1,4 @@
-package net.integr.data.userstorage
+package net.integr.data.users
 
 import com.google.gson.GsonBuilder
 import java.io.File
@@ -15,7 +15,7 @@ class UserStorage {
             if (!f.exists()) save()
 
             val json = f.readText()
-            users = GsonBuilder().create().fromJson(json, Array<ServerUser>::class.java).toMutableList()
+            users = GsonBuilder().setPrettyPrinting().create().fromJson(json, Array<ServerUser>::class.java).toMutableList()
         }
 
         fun save() {
@@ -37,6 +37,16 @@ class UserStorage {
         fun getFromEmail(email: String): ServerUser? {
             for (user in users) {
                 if (user.email == email) {
+                    return user
+                }
+            }
+
+            return null
+        }
+
+        fun getById(id: Long): ServerUser? {
+            for (user in users) {
+                if (user.user.id == id) {
                     return user
                 }
             }
