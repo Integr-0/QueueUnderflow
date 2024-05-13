@@ -282,7 +282,7 @@ fun Route.routeDelete() {
                     if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
                         if (searchedItem.status != Status.archived) {
                             TicketStorage.tickets.remove(searchedItem)
-                            call.respond(HttpStatusCode.OK, "Comment created.")
+                            call.respond(HttpStatusCode.OK, "Ticked deleted.")
                             TicketStorage.save()
                         } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
                     } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
@@ -293,8 +293,9 @@ fun Route.routeDelete() {
                             v.comments.remove(searchedItem)
                         } else (v as Comment).comments.remove(searchedItem)
                         TicketStorage.save()
+                        call.respond(HttpStatusCode.OK, "Comment deleted.")
+
                     } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
-                    call.respond(HttpStatusCode.OK, "Comment created.")
                 } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
             } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
         } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
