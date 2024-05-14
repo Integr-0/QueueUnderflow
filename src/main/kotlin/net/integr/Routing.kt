@@ -35,12 +35,15 @@ fun Application.configureRouting() {
         routeLogout()
         routeDeleteAccount()
 
-        routeTickets()
         routePost()
-        routeTicket()
-        routeUser()
         routeComment()
         routeDelete()
+
+        routeTickets()
+        routeTicketId()
+
+        routeUsers()
+        routeCurrentUser()
     }
 }
 
@@ -190,7 +193,7 @@ fun Route.routeTickets() {
 }
 
 @KtorDsl
-fun Route.routeTicket() {
+fun Route.routeTicketId() {
     get("/tickets/{id}") {
         val id = call.parameters["id"]
 
@@ -209,7 +212,7 @@ fun Route.routeTicket() {
 }
 
 @KtorDsl
-fun Route.routeUser() {
+fun Route.routeUsers() {
     get("/users/{id}") {
         val id = call.parameters["id"]
 
@@ -299,5 +302,16 @@ fun Route.routeDelete() {
                 } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
             } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
         } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+    }
+}
+
+@KtorDsl
+fun Route.routeCurrentUser() {
+    get("/user") {
+        val user = call.sessions.get<UserSession>()
+
+        if (user != null) {
+            call.respond(UserStorage.getById(user.activeUID)!!.user)
+        } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
     }
 }
