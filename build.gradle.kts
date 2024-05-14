@@ -36,5 +36,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("io.ktor:ktor-server-rate-limit:$ktor_version")
     implementation("org.apache.commons:commons-email:1.5")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
 
 }

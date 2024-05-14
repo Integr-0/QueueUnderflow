@@ -5,6 +5,7 @@ import io.ktor.serialization.gson.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
@@ -105,6 +106,10 @@ fun Application.module() {
         register(RateLimitName("delete")) {
             rateLimiter(limit = 1, refillPeriod = 120.seconds)
         }
+    }
+
+    install(CORS) {
+        anyHost()
     }
 
     configureRouting()

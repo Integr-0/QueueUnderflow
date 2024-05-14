@@ -26,7 +26,7 @@ class UserStorage {
 
         fun getFromUsername(username: String): ServerUser? {
             for (user in users) {
-                if (user.username == username) {
+                if (user.user.username == username) {
                     return user
                 }
             }

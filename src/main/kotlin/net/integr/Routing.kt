@@ -116,8 +116,8 @@ fun Route.routeVerify() {
                 val savedCode = CodeStorage.getByCode(code.toInt())
 
                 if (savedCode != null) {
-                    val user = User(UserStorage.generateID(), savedCode.username, savedCode.creation)
-                    UserStorage.users += ServerUser(savedCode.username, savedCode.email, savedCode.hashedPass, savedCode.salt, user, false)
+                    val user = User(UserStorage.generateID(), savedCode.username, savedCode.username, savedCode.creation)
+                    UserStorage.users += ServerUser(savedCode.email, savedCode.hashedPass, savedCode.salt, user, false)
                     CodeStorage.awaiting.remove(savedCode)
                     CodeStorage.save()
                     UserStorage.save()
@@ -144,7 +144,7 @@ fun Route.routeLogout() {
 
 @KtorDsl
 fun Route.routeDeleteAccount() {
-    post("/delete_account") {
+    delete("/delete_account") {
         val account = call.sessions.get<UserSession>()
 
         if (account != null) {
@@ -271,7 +271,7 @@ fun Route.routeComment() {
 
 @KtorDsl
 fun Route.routeDelete() {
-    post("/delete") {
+    delete("/delete") {
         val user = call.sessions.get<UserSession>()
         val deleteData = call.receiveNullable<DeleteData>()
 
