@@ -9,9 +9,25 @@
       "username": "julian",
       "creationTime": 1715670253439
     },
-    "comments": [],
-    "score": 0,
-    "upVoters": [],
+    "comments": [
+      {
+        "id": 45789187898,
+        "body": "Agreed",
+        "author": {
+          "id": 24474010458,
+          "displayName": "Erik",
+          "username": "erik",
+          "creationTime": 1715614312467
+        },
+        "score": 0,
+        "comments": [],
+        "parent": 94860438119
+      }
+    ],
+    "score": 1,
+    "upVoters": [
+      24474010458
+    ],
     "downVoters": [],
     "tags": [
       1,

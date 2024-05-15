@@ -131,7 +131,6 @@ Returns:
     "creationTime": <user creation time (Long)>
   },
   "comments": [<comments>],
-  "score": <score>,
   "upVoters": [<user ids>],
   "downVoters": [<user ids>],
   "tags": [<tags>],

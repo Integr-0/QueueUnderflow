@@ -7,6 +7,7 @@ import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.math.min
 import kotlin.random.Random
+import kotlin.streams.toList
 
 class TicketStorage {
     companion object {

@@ -5,6 +5,7 @@ import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.random.Random
+import kotlin.streams.toList
 
 class UserStorage {
     companion object {

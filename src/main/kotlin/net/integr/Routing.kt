@@ -25,6 +25,7 @@ import net.integr.email.EmailService
 import net.integr.email.EmailVerificationPiece
 import net.integr.encryption.Encryption
 import kotlin.math.max
+import kotlin.streams.toList
 
 fun Application.configureRouting() {
     routing {
@@ -106,7 +107,7 @@ class Api {
                     if (signupData != null && signupData.username.isNotEmpty() && signupData.password.isNotEmpty() && signupData.password.isNotEmpty()) {
                         val username = signupData.username
                         if (UserStorage.getFromUsername(username) == null && CodeStorage.getFromUsername(username) == null) {
-                            if (username.toCharArray().toList().stream().filter { it.isUpperCase() }.toList().size == 0) {
+                            if (username.toCharArray().toList().stream().filter { it.isUpperCase() }.toList().isEmpty()) {
                                 val email = signupData.email
                                 if (UserStorage.getFromEmail(email) == null && CodeStorage.getFromEmail(email) == null) {
                                     if (EmailService.verifyEmail(email)) {
@@ -262,7 +263,7 @@ class Api {
 
                 if (creationData != null && creationData.title.isNotEmpty() && creationData.body.isNotEmpty()) {
                     if (user != null) {
-                        val ticket = Ticket(TicketStorage.generateID(), creationData.title, creationData.body, UserStorage.getById(user.activeUID)!!.user, mutableListOf(), 0, mutableListOf(), mutableListOf(), creationData.tags, Status.unsolved, System.currentTimeMillis()) // Create a new ticket
+                        val ticket = Ticket(TicketStorage.generateID(), creationData.title, creationData.body, UserStorage.getById(user.activeUID)!!.user, mutableListOf(), mutableListOf(), mutableListOf(), creationData.tags, Status.unsolved, System.currentTimeMillis()) // Create a new ticket
                         TicketStorage.tickets += ticket
                         TicketStorage.save() // Save the data
                         call.respond(HttpStatusCode.OK, "Ticket created.")
@@ -381,8 +382,6 @@ class Api {
                                 ticket.upVoters.add(user.activeUID)
                                 if (ticket.downVoters.contains(user.activeUID)) ticket.downVoters.remove(user.activeUID)
 
-                                ticket.score = ticket.upVoters.size - ticket.downVoters.size
-
                                 TicketStorage.save()
                                 call.respond(HttpStatusCode.OK, "Upvoted the ticket.")
                             } else call.respond(HttpStatusCode.BadRequest, "Already upvoting this ticket.")
@@ -405,8 +404,6 @@ class Api {
                             if (!ticket.downVoters.contains(user.activeUID)) {
                                 ticket.downVoters.add(user.activeUID)
                                 if (ticket.upVoters.contains(user.activeUID)) ticket.upVoters.remove(user.activeUID)
-
-                                ticket.score = ticket.upVoters.size - ticket.downVoters.size
 
                                 TicketStorage.save()
                                 call.respond(HttpStatusCode.OK, "Downvoted the ticket.")
