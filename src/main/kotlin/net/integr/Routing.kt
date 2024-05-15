@@ -2,15 +2,17 @@ package net.integr
 
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
+import net.integr.Api.Companion.routeApi
+import net.integr.Frontend.Companion.routeFrontend
 import net.integr.config.ConfigStorage
 import net.integr.cookie.UserSession
 import net.integr.data.requests.*
+import net.integr.data.requests.responses.SearchResponse
 import net.integr.data.users.ServerUser
 import net.integr.data.tickets.TicketStorage
 import net.integr.data.users.UserStorage
@@ -26,292 +28,394 @@ import kotlin.math.max
 
 fun Application.configureRouting() {
     routing {
-        staticResources("/", "static")
-
-        routeSignup()
-        routeVerify()
-
-        routeLogin()
-        routeLogout()
-        routeDeleteAccount()
-
-        routePost()
-        routeComment()
-        routeDelete()
-
-        routeTickets()
-        routeTicketId()
-
-        routeUsers()
-        routeCurrentUser()
+        routeApi()
+        routeFrontend()
     }
 }
 
-@KtorDsl
-fun Route.routeLogin() {
-    post("/login") {
-        try {
-            val loginData = call.receiveNullable<LoginData>()
+class Frontend {
+    companion object {
+        @KtorDsl
+        fun Route.routeFrontend() {
 
-            if (loginData != null && loginData.username.isNotEmpty() && loginData.password.isNotEmpty()) { // Check if all data is there
-                if (Encryption.validateSHA512(loginData.password)) { // Validate the SHA-512 Hash
-                    val username = loginData.username
-                    val user = UserStorage.getFromUsername(username) // Find the username in the database
-
-                    if (user != null) { // Check if the user exists
-                        val enteredPassword = Encryption.hash(loginData.password + user.salt) // Hash the password that was entered
-                        val actualPassword = user.passwordHash
-
-                        if (enteredPassword == actualPassword) { // Compare the passwords
-                            call.sessions.set(UserSession(user.user.id)) // Set the cookie
-                            call.respond(HttpStatusCode.OK, "Logged in. Cookie set.")
-                        } else call.respond(HttpStatusCode.BadRequest, "Invalid credentials.")
-                    } else call.respond(HttpStatusCode.BadRequest, "Username does not exist.")
-                } else call.respond(HttpStatusCode.BadRequest, "Invalid hash.")
-            } else call.respond(HttpStatusCode.BadRequest, "Missing data.")
-        } catch (e: NullPointerException) {
-            call.respond(HttpStatusCode.BadRequest, "Missing data.")
         }
     }
 }
 
-@KtorDsl
-fun Route.routeSignup() {
-    post("/signup") {
-        try {
-            val signupData = call.receiveNullable<SignupData>() // Get the signup json data
+class Api {
+    companion object {
+        @KtorDsl
+        fun Route.routeApi() {
+            routeSignup()
+            routeVerify()
 
-            if (signupData != null && signupData.username.isNotEmpty() && signupData.password.isNotEmpty() && signupData.password.isNotEmpty()) {
-                val username = signupData.username
-                if (UserStorage.getFromUsername(username) == null && CodeStorage.getFromUsername(username) == null) {
-                    val email = signupData.email
-                    if (UserStorage.getFromEmail(email) == null && CodeStorage.getFromEmail(email) == null) {
-                        if (EmailService.verifyEmail(email)) {
-                            val enteredPassword = signupData.password
+            routeLogin()
+            routeLogout()
+            routeDeleteAccount()
 
-                            val salt = Encryption.generateSalt() // Generate the salt
-                            val hashedPassword = Encryption.hash(enteredPassword + salt) // Hash the password
+            routePost()
+            routeComment()
+            routeDelete()
 
-                            val emailVerify = EmailService.generateVerify(ConfigStorage.INSTANCE!!.mainUrl) // Generate the email verification url
+            routeTickets()
+            routeTicketId()
 
-                            //EmailService.send(emailVerifyUrl, email) //TODO: Send email instead of printing
+            routeUsers()
+            routeCurrentUser()
 
-                            CodeStorage.awaiting += EmailVerificationPiece(System.currentTimeMillis(), email, emailVerify.second, hashedPassword, salt, username)
-                            CodeStorage.save()
+            routeSearch()
 
-                            call.respond(HttpStatusCode.OK, "Verification code sent. TEMP: ${emailVerify.first}")
-                        } else call.respond(HttpStatusCode.BadRequest, "Invalid email.")
-                    } else call.respond(HttpStatusCode.BadRequest, "Email already exist.")
-                } else call.respond(HttpStatusCode.BadRequest, "Username already exist.")
-            } else call.respond(HttpStatusCode.BadRequest, "Missing data.")
-        } catch (e: NullPointerException) {
-            call.respond(HttpStatusCode.BadRequest, "Missing data.")
+            routeDownVote()
+            routeUpVote()
         }
-    }
-}
 
-@KtorDsl
-fun Route.routeVerify() {
-    get("/verify") {
-        val code = call.parameters["code"]
-        if (code != null) {
-            try {
-                val savedCode = CodeStorage.getByCode(code.toInt())
+        @KtorDsl
+        fun Route.routeLogin() {
+            post("/api/login") {
+                try {
+                    val loginData = call.receiveNullable<LoginData>()
 
-                if (savedCode != null) {
-                    val user = User(UserStorage.generateID(), savedCode.username, savedCode.username, savedCode.creation)
-                    UserStorage.users += ServerUser(savedCode.email, savedCode.hashedPass, savedCode.salt, user, false)
-                    CodeStorage.awaiting.remove(savedCode)
-                    CodeStorage.save()
-                    UserStorage.save()
-                    call.respond(HttpStatusCode.OK, "User registered.")
-                } else call.respond(HttpStatusCode.BadRequest, "Invalid code.")
-            } catch(e: NumberFormatException) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid code.")
+                    if (loginData != null && loginData.username.isNotEmpty() && loginData.password.isNotEmpty()) { // Check if all data is there
+                        if (Encryption.validateSHA512(loginData.password)) { // Validate the SHA-512 Hash
+                            val username = loginData.username
+                            val user = UserStorage.getFromUsername(username) // Find the username in the database
+
+                            if (user != null) { // Check if the user exists
+                                val enteredPassword = Encryption.hash(loginData.password + user.salt) // Hash the password that was entered
+                                val actualPassword = user.passwordHash
+
+                                if (enteredPassword == actualPassword) { // Compare the passwords
+                                    call.sessions.set(UserSession(user.user.id)) // Set the cookie
+                                    call.respond(HttpStatusCode.OK, "Logged in. Cookie set.")
+                                } else call.respond(HttpStatusCode.BadRequest, "Invalid credentials.")
+                            } else call.respond(HttpStatusCode.BadRequest, "Username does not exist.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Invalid hash.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Missing data.")
+                } catch (e: NullPointerException) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing data.")
+                }
             }
-        } else call.respond(HttpStatusCode.BadRequest, "Missing code.")
-    }
-}
+        }
 
-@KtorDsl
-fun Route.routeLogout() {
-    post("/logout") {
-        val account = call.sessions.get<UserSession>()
+        @KtorDsl
+        fun Route.routeSignup() {
+            post("/api/signup") {
+                try {
+                    val signupData = call.receiveNullable<SignupData>() // Get the signup json data
 
-        if (account != null) {
-            call.sessions.clear<UserSession>()
-            call.respond(HttpStatusCode.OK, "Logged Out.")
-        } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
-    }
-}
+                    if (signupData != null && signupData.username.isNotEmpty() && signupData.password.isNotEmpty() && signupData.password.isNotEmpty()) {
+                        val username = signupData.username
+                        if (UserStorage.getFromUsername(username) == null && CodeStorage.getFromUsername(username) == null) {
+                            if (username.toCharArray().toList().stream().filter { it.isUpperCase() }.toList().size == 0) {
+                                val email = signupData.email
+                                if (UserStorage.getFromEmail(email) == null && CodeStorage.getFromEmail(email) == null) {
+                                    if (EmailService.verifyEmail(email)) {
+                                        val enteredPassword = signupData.password
 
-@KtorDsl
-fun Route.routeDeleteAccount() {
-    delete("/delete_account") {
-        val account = call.sessions.get<UserSession>()
+                                        val salt = Encryption.generateSalt() // Generate the salt
+                                        val hashedPassword = Encryption.hash(enteredPassword + salt) // Hash the password
 
-        if (account != null) {
-            call.sessions.clear<UserSession>()
-            UserStorage.users.remove(UserStorage.getById(account.activeUID))
-            UserStorage.save()
-            call.respond(HttpStatusCode.OK, "Deleted.")
-        } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
-    }
-}
+                                        val emailVerify = EmailService.generateVerify(ConfigStorage.INSTANCE!!.mainUrl) // Generate the email verification url
 
-@KtorDsl
-fun Route.routeTickets() {
-    get("/tickets") {
-        val limit = call.parameters["limit"]
-        val offset = call.parameters["offset"]
-        val noCom = call.parameters.contains("nocom")
+                                        //EmailService.send(emailVerifyUrl, email) //TODO: Send email instead of printing
 
-        if (limit != null) {
-            try {
-                val setLimit = limit.toInt()
-                if (setLimit > 0) {
-                    val tickets: MutableList<Ticket> = mutableListOf()
-                    var os = 0
+                                        CodeStorage.awaiting += EmailVerificationPiece(System.currentTimeMillis(), email, emailVerify.second, hashedPassword, salt, username)
+                                        CodeStorage.save()
+
+                                        call.respond(HttpStatusCode.OK, "Verification code sent. TEMP: ${emailVerify.first}")
+                                    } else call.respond(HttpStatusCode.BadRequest, "Invalid email.")
+                                } else call.respond(HttpStatusCode.BadRequest, "Email already exist.")
+                            } else call.respond(HttpStatusCode.BadRequest, "Username is not lowercase.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Username already exist.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Missing data.")
+                } catch (e: NullPointerException) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing data.")
+                }
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeVerify() {
+            get("/api/verify") {
+                val code = call.parameters["code"]
+                if (code != null) {
                     try {
-                        if (offset != null) os = max(0, offset.toInt())
-                        if (noCom) {
-                            TicketStorage.getAmount(setLimit, os).forEach {
-                                val t = it.displayNoComCopy()
-                                tickets += t
-                            }
-                        } else tickets.addAll(TicketStorage.getAmount(setLimit, os))
-                        call.respond(tickets)
-                    } catch (e: NumberFormatException) {
-                        call.respond(HttpStatusCode.BadRequest, "Invalid offset.")
+                        val savedCode = CodeStorage.getByCode(code.toInt()) // Get the auth code from storage
+
+                        if (savedCode != null) {
+                            val user = User(UserStorage.generateID(), savedCode.username, savedCode.username, savedCode.creation) // Create user
+                            UserStorage.users += ServerUser(savedCode.email, savedCode.hashedPass, savedCode.salt, user, false)
+                            CodeStorage.awaiting.remove(savedCode) // Delete code
+                            CodeStorage.save() // Save the data
+                            UserStorage.save()
+                            call.respond(HttpStatusCode.OK, "User registered.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Invalid code.")
+                    } catch(e: NumberFormatException) {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid code.")
                     }
-                } else call.respond(HttpStatusCode.BadRequest, "Invalid limit.")
-            } catch(e: NumberFormatException) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid limit.")
+                } else call.respond(HttpStatusCode.BadRequest, "Missing code.")
             }
-        } else call.respond(TicketStorage.getAmount(10, 0))
-    }
-}
+        }
 
-@KtorDsl
-fun Route.routeTicketId() {
-    get("/tickets/{id}") {
-        val id = call.parameters["id"]
+        @KtorDsl
+        fun Route.routeLogout() {
+            post("/api/logout") {
+                val account = call.sessions.get<UserSession>() // Get the active user
 
-        if (id != null) {
-            try {
-                val setId = id.toLong()
-                val ticket = TicketStorage.getById(setId)
-                if (ticket != null) {
-                    call.respond(ticket)
-                } else call.respond(HttpStatusCode.BadRequest, "Ticket was not found.")
-            } catch (e: NumberFormatException) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+                if (account != null) {
+                    call.sessions.clear<UserSession>() // Log out
+                    call.respond(HttpStatusCode.OK, "Logged Out.")
+                } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
             }
-        } else call.respond(HttpStatusCode.BadRequest, "Invalid id.")
-    }
-}
+        }
 
-@KtorDsl
-fun Route.routeUsers() {
-    get("/users/{id}") {
-        val id = call.parameters["id"]
+        @KtorDsl
+        fun Route.routeDeleteAccount() {
+            delete("/api/delete_account") {
+                val account = call.sessions.get<UserSession>() // Get the active user
 
-        if (id != null) {
-            try {
-                val setId = id.toLong()
-                val user = UserStorage.getById(setId)
+                if (account != null) {
+                    call.sessions.clear<UserSession>() // Log out
+                    UserStorage.users.remove(UserStorage.getById(account.activeUID)) // Delete the user
+                    UserStorage.save() // Save
+                    call.respond(HttpStatusCode.OK, "Deleted.")
+                } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeTickets() {
+            get("/api/tickets") {
+                val limit = call.parameters["limit"]
+                val offset = call.parameters["offset"]
+                val noCom = call.parameters.contains("nocom") // Get the data
+
+                if (limit != null) {
+                    try {
+                        val setLimit = limit.toInt()
+                        if (setLimit > 0) {
+                            val tickets: MutableList<Ticket> = mutableListOf()
+                            var os = 0
+                            try {
+                                if (offset != null) os = max(0, offset.toInt()) // Manage the offset
+                                if (noCom) { // Manage removing the comments
+                                    TicketStorage.getAmount(setLimit, os).forEach {
+                                        val t = it.displayNoComCopy()
+                                        tickets += t
+                                    }
+                                } else tickets.addAll(TicketStorage.getAmount(setLimit, os)) // Get tickets
+                                call.respond(tickets) // Return the found tickets
+                            } catch (e: NumberFormatException) {
+                                call.respond(HttpStatusCode.BadRequest, "Invalid offset.")
+                            }
+                        } else call.respond(HttpStatusCode.BadRequest, "Invalid limit.")
+                    } catch(e: NumberFormatException) {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid limit.")
+                    }
+                } else call.respond(TicketStorage.getAmount(10, 0))
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeTicketId() {
+            get("/api/tickets/{id}") {
+                val id = call.parameters["id"]
+
+                if (id != null) {
+                    try {
+                        val setId = id.toLong()
+                        val ticket = TicketStorage.getById(setId) // Get the queried ticket
+                        if (ticket != null) {
+                            call.respond(ticket) // Send it to the user
+                        } else call.respond(HttpStatusCode.BadRequest, "Ticket was not found.")
+                    } catch (e: NumberFormatException) {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+                    }
+                } else call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeUsers() {
+            get("/api/users/{id}") {
+                val id = call.parameters["id"]
+
+                if (id != null) {
+                    try {
+                        val setId = id.toLong()
+                        val user = UserStorage.getById(setId) // Get the queried user
+                        if (user != null) {
+                            call.respond(user.user) // Send it to the user
+                        } else call.respond(HttpStatusCode.BadRequest, "User was not found.")
+                    } catch (e: NumberFormatException) {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+                    }
+                } else call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routePost() {
+            post("/api/post") {
+                val user = call.sessions.get<UserSession>()
+                val creationData = call.receiveNullable<CreateData>() // Get the data
+
+                if (creationData != null && creationData.title.isNotEmpty() && creationData.body.isNotEmpty()) {
+                    if (user != null) {
+                        val ticket = Ticket(TicketStorage.generateID(), creationData.title, creationData.body, UserStorage.getById(user.activeUID)!!.user, mutableListOf(), 0, mutableListOf(), mutableListOf(), creationData.tags, Status.unsolved, System.currentTimeMillis()) // Create a new ticket
+                        TicketStorage.tickets += ticket
+                        TicketStorage.save() // Save the data
+                        call.respond(HttpStatusCode.OK, "Ticket created.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+                } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeComment() {
+            post("/api/comment") {
+                val user = call.sessions.get<UserSession>()
+                val commentData = call.receiveNullable<CommentData>() // Get the data
+
+                if (commentData != null && commentData.body.isNotEmpty()) {
+                    if (user != null) {
+                        val searchedItem = TicketStorage.getGlobalByID(commentData.id) // Get the object
+                        if (searchedItem is Ticket) { // Handle ticket
+                            if (searchedItem.status != Status.archived) {
+                                searchedItem.comments += Comment(TicketStorage.generateID(), commentData.body, UserStorage.getById(user.activeUID)!!.user, 0, mutableListOf(), searchedItem.id) // Create the comment
+                                call.respond(HttpStatusCode.OK, "Comment created.")
+                                TicketStorage.save() // Save the ticket
+                            } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
+                        } else if (searchedItem is Comment) { // Handle comment
+                            searchedItem.comments += Comment(TicketStorage.generateID(), commentData.body, UserStorage.getById(user.activeUID)!!.user, 0, mutableListOf(), searchedItem.id) // Create the comment
+                            TicketStorage.save() // Save the comment
+                            call.respond(HttpStatusCode.OK, "Comment created.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+                } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeDelete() {
+            delete("/api/delete") {
+                val user = call.sessions.get<UserSession>()
+                val deleteData = call.receiveNullable<DeleteData>() // Get the user and the item to delete
+
+                if (deleteData != null) {
+                    if (user != null) {
+                        val searchedItem = TicketStorage.getGlobalByID(deleteData.id) // Get the item from storage
+                        if (searchedItem is Ticket) { // Handle ticket
+                            if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                                if (searchedItem.status != Status.archived) {
+                                    TicketStorage.tickets.remove(searchedItem) // Delete the ticket
+                                    TicketStorage.save() // Save the data
+                                    call.respond(HttpStatusCode.OK, "Ticked deleted.")
+                                } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
+                            } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
+                        } else if (searchedItem is Comment) { // Handle comment
+                            if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                                val v = TicketStorage.getGlobalByID(searchedItem.parent) // Get the comment parent
+                                if (v is Ticket) {
+                                    v.comments.remove(searchedItem) // Delete the comment
+                                } else (v as Comment).comments.remove(searchedItem)
+                                TicketStorage.save() // Save the data
+                                call.respond(HttpStatusCode.OK, "Comment deleted.")
+
+                            } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+                } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeCurrentUser() {
+            get("/api/user") {
+                val user = call.sessions.get<UserSession>() // Get the current user
+
                 if (user != null) {
-                    call.respond(user.user)
-                } else call.respond(HttpStatusCode.BadRequest, "User was not found.")
-            } catch (e: NumberFormatException) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+                    call.respond(UserStorage.getById(user.activeUID)!!.user) // Send the data
+                } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
             }
-        } else call.respond(HttpStatusCode.BadRequest, "Invalid id.")
+        }
+
+        @KtorDsl
+        fun Route.routeSearch() {
+            get("/api/search") {
+                val query = call.parameters["query"]
+                val limit = call.parameters["limit"]
+
+                if (!query.isNullOrEmpty()) {
+                    if (limit != null) {
+                        try {
+                            val setLimit = limit.toInt()
+                            val users = UserStorage.getByQuery(query, setLimit)
+                            val tickets = TicketStorage.getByQuery(query, setLimit)
+
+                            call.respond(SearchResponse(tickets, users)) // Respond with the data
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.BadRequest, "Invalid limit.")
+                        }
+                    } else {
+                        val users = UserStorage.getByQuery(query)
+                        val tickets = TicketStorage.getByQuery(query)
+
+                        call.respond(SearchResponse(tickets, users)) // Respond with the data
+                    }
+                } else call.respond(HttpStatusCode.BadRequest, "No query present.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeUpVote() {
+            post("/api/upvote") {
+                val user = call.sessions.get<UserSession>()
+
+                if (user != null) {
+                    val data = call.receiveNullable<VoteData>()
+                    if (data != null) {
+                        val ticket = TicketStorage.getById(data.id)
+                        if (ticket != null) {
+                            if (!ticket.upVoters.contains(user.activeUID)) {
+                                ticket.upVoters.add(user.activeUID)
+                                if (ticket.downVoters.contains(user.activeUID)) ticket.downVoters.remove(user.activeUID)
+
+                                ticket.score = ticket.upVoters.size - ticket.downVoters.size
+
+                                TicketStorage.save()
+                                call.respond(HttpStatusCode.OK, "Upvoted the ticket.")
+                            } else call.respond(HttpStatusCode.BadRequest, "Already upvoting this ticket.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Ticket not found.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+                } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeDownVote() {
+            post("/api/downvote") {
+                val user = call.sessions.get<UserSession>()
+
+                if (user != null) {
+                    val data = call.receiveNullable<VoteData>()
+                    if (data != null) {
+                        val ticket = TicketStorage.getById(data.id)
+                        if (ticket != null) {
+                            if (!ticket.downVoters.contains(user.activeUID)) {
+                                ticket.downVoters.add(user.activeUID)
+                                if (ticket.upVoters.contains(user.activeUID)) ticket.upVoters.remove(user.activeUID)
+
+                                ticket.score = ticket.upVoters.size - ticket.downVoters.size
+
+                                TicketStorage.save()
+                                call.respond(HttpStatusCode.OK, "Downvoted the ticket.")
+                            } else call.respond(HttpStatusCode.BadRequest, "Already downvoting this ticket.")
+                        } else call.respond(HttpStatusCode.BadRequest, "Ticket not found.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
+                } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+            }
+        }
     }
 }
 
-@KtorDsl
-fun Route.routePost() {
-    post("/post") {
-        val user = call.sessions.get<UserSession>()
-        val creationData = call.receiveNullable<CreateData>()
-
-        if (creationData != null && creationData.title.isNotEmpty() && creationData.body.isNotEmpty()) {
-            if (user != null) {
-                val ticket = Ticket(TicketStorage.generateID(), creationData.title, creationData.body, UserStorage.getById(user.activeUID)!!.user, mutableListOf(), 0, creationData.tags, Status.unsolved, System.currentTimeMillis())
-                TicketStorage.tickets += ticket
-                TicketStorage.save()
-                call.respond(HttpStatusCode.OK, "Ticket created.")
-            } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
-        } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
-    }
-}
-
-@KtorDsl
-fun Route.routeComment() {
-    post("/comment") {
-        val user = call.sessions.get<UserSession>()
-        val commentData = call.receiveNullable<CommentData>()
-
-        if (commentData != null && commentData.body.isNotEmpty()) {
-            if (user != null) {
-                val searchedItem = TicketStorage.getGlobalByID(commentData.id)
-                if (searchedItem is Ticket) {
-                    if (searchedItem.status != Status.archived) {
-                        searchedItem.comments += Comment(TicketStorage.generateID(), commentData.body, UserStorage.getById(user.activeUID)!!.user, 0, mutableListOf(), searchedItem.id)
-                        call.respond(HttpStatusCode.OK, "Comment created.")
-                        TicketStorage.save()
-                    } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
-                } else if (searchedItem is Comment) {
-                    searchedItem.comments += Comment(TicketStorage.generateID(), commentData.body, UserStorage.getById(user.activeUID)!!.user, 0, mutableListOf(), searchedItem.id)
-                    TicketStorage.save()
-                    call.respond(HttpStatusCode.OK, "Comment created.")
-                } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
-            } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
-        } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
-    }
-}
-
-@KtorDsl
-fun Route.routeDelete() {
-    delete("/delete") {
-        val user = call.sessions.get<UserSession>()
-        val deleteData = call.receiveNullable<DeleteData>()
-
-        if (deleteData != null) {
-            if (user != null) {
-                val searchedItem = TicketStorage.getGlobalByID(deleteData.id)
-                if (searchedItem is Ticket) {
-                    if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
-                        if (searchedItem.status != Status.archived) {
-                            TicketStorage.tickets.remove(searchedItem)
-                            call.respond(HttpStatusCode.OK, "Ticked deleted.")
-                            TicketStorage.save()
-                        } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
-                    } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
-                } else if (searchedItem is Comment) {
-                    if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
-                        val v = TicketStorage.getGlobalByID(searchedItem.parent)
-                        if (v is Ticket) {
-                            v.comments.remove(searchedItem)
-                        } else (v as Comment).comments.remove(searchedItem)
-                        TicketStorage.save()
-                        call.respond(HttpStatusCode.OK, "Comment deleted.")
-
-                    } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
-                } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
-            } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
-        } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
-    }
-}
-
-@KtorDsl
-fun Route.routeCurrentUser() {
-    get("/user") {
-        val user = call.sessions.get<UserSession>()
-
-        if (user != null) {
-            call.respond(UserStorage.getById(user.activeUID)!!.user)
-        } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
-    }
-}

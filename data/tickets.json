@@ -1,42 +1,6 @@
 [
   {
-    "id": 55526537825,
-    "title": "W Server",
-    "body": "Agreed",
-    "author": {
-      "id": 24474010458,
-      "displayName": "Erik",
-      "username": "erik",
-      "creationTime": 1715614312467
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      1
-    ],
-    "status": 1,
-    "createdAt": 1715625626462
-  },
-  {
-    "id": 94033386749,
-    "title": "Ass",
-    "body": "Ass",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      1
-    ],
-    "status": 1,
-    "createdAt": 1715670266196
-  },
-  {
-    "id": 12093505798,
+    "id": 94860438119,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -47,223 +11,17 @@
     },
     "comments": [],
     "score": 0,
-    "tags": [
-      1
-    ],
-    "status": 1,
-    "createdAt": 1715670284820
-  },
-  {
-    "id": 54026436276,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672948994
-  },
-  {
-    "id": 91576626351,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672949618
-  },
-  {
-    "id": 52695394111,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672950290
-  },
-  {
-    "id": 97474620103,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672950951
-  },
-  {
-    "id": 31690993467,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672951591
-  },
-  {
-    "id": 2338212157,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672952267
-  },
-  {
-    "id": 7144189474,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672952844
-  },
-  {
-    "id": 56861542743,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672953515
-  },
-  {
-    "id": 61747352348,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672954181
-  },
-  {
-    "id": 16035229674,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      0,
-      1
-    ],
-    "status": 4,
-    "createdAt": 1715672954781
-  },
-  {
-    "id": 17179007377,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672960385
+    "createdAt": 1715782675238
   },
   {
-    "id": 38766618490,
+    "id": 34469692892,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -274,15 +32,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672960510
+    "createdAt": 1715782675944
   },
   {
-    "id": 16663576017,
+    "id": 37444205988,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -293,15 +53,40 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672960775
+    "createdAt": 1715782676080
   },
   {
-    "id": 42992894570,
+    "id": 53221237005,
+    "title": "Test Values",
+    "body": "Testing",
+    "author": {
+      "id": 5522679076,
+      "displayName": "Julian",
+      "username": "julian",
+      "creationTime": 1715670253439
+    },
+    "comments": [],
+    "score": 1,
+    "upVoters": [
+      5522679076
+    ],
+    "downVoters": [],
+    "tags": [
+      1,
+      2
+    ],
+    "status": 4,
+    "createdAt": 1715782676375
+  },
+  {
+    "id": 98701160512,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -312,15 +97,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672961030
+    "createdAt": 1715782676453
   },
   {
-    "id": 24586344049,
+    "id": 15016562274,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -331,15 +118,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672961140
+    "createdAt": 1715782676581
   },
   {
-    "id": 2062002260,
+    "id": 96981117213,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -350,15 +139,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672961411
+    "createdAt": 1715782676866
   },
   {
-    "id": 96675116553,
+    "id": 16327441300,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -369,15 +160,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672961475
+    "createdAt": 1715782676962
   },
   {
-    "id": 24867603598,
+    "id": 9673701584,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -388,15 +181,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672961743
+    "createdAt": 1715782677249
   },
   {
-    "id": 33571690360,
+    "id": 32397323736,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -407,15 +202,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672961854
+    "createdAt": 1715782677313
   },
   {
-    "id": 9401503573,
+    "id": 43405688837,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -426,15 +223,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672962106
+    "createdAt": 1715782677581
   },
   {
-    "id": 20730617973,
+    "id": 79672098983,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -445,15 +244,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672962218
+    "createdAt": 1715782677690
   },
   {
-    "id": 58898827058,
+    "id": 84788190499,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -464,15 +265,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672962488
+    "createdAt": 1715782678105
   },
   {
-    "id": 63989543465,
+    "id": 85207886916,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -483,15 +286,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672962566
+    "createdAt": 1715782678106
   },
   {
-    "id": 19034734558,
+    "id": 85013747883,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -502,15 +307,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672962835
+    "createdAt": 1715782678209
   },
   {
-    "id": 82703656150,
+    "id": 16026405246,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -521,15 +328,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672962962
+    "createdAt": 1715782678385
   },
   {
-    "id": 86566377162,
+    "id": 75456155524,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -540,15 +349,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672963215
+    "createdAt": 1715782678929
   },
   {
-    "id": 33267548688,
+    "id": 42935518154,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -559,15 +370,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672963325
+    "createdAt": 1715782679096
   },
   {
-    "id": 26147192651,
+    "id": 40856035675,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -578,15 +391,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672963575
+    "createdAt": 1715782679262
   },
   {
-    "id": 26993936302,
+    "id": 38519033175,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -597,15 +412,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672963658
+    "createdAt": 1715782679435
   },
   {
-    "id": 95875405517,
+    "id": 8193726113,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -616,15 +433,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672963962
+    "createdAt": 1715782679620
   },
   {
-    "id": 45389873106,
+    "id": 7268230264,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -635,15 +454,17 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672964009
+    "createdAt": 1715782679780
   },
   {
-    "id": 69230372057,
+    "id": 5974282089,
     "title": "Test Values",
     "body": "Testing",
     "author": {
@@ -654,87 +475,13 @@
     },
     "comments": [],
     "score": 0,
+    "upVoters": [],
+    "downVoters": [],
     "tags": [
       1,
-      0
+      2
     ],
     "status": 4,
-    "createdAt": 1715672964264
-  },
-  {
-    "id": 55352617894,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      1,
-      0
-    ],
-    "status": 4,
-    "createdAt": 1715672964373
-  },
-  {
-    "id": 78312734251,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      1,
-      0
-    ],
-    "status": 4,
-    "createdAt": 1715672964641
-  },
-  {
-    "id": 61091816231,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      1,
-      0
-    ],
-    "status": 4,
-    "createdAt": 1715672964689
-  },
-  {
-    "id": 21043762465,
-    "title": "Test Values",
-    "body": "Testing",
-    "author": {
-      "id": 5522679076,
-      "displayName": "Julian",
-      "username": "julian",
-      "creationTime": 1715670253439
-    },
-    "comments": [],
-    "score": 0,
-    "tags": [
-      1,
-      0
-    ],
-    "status": 4,
-    "createdAt": 1715672964942
+    "createdAt": 1715782679949
   }
 ]

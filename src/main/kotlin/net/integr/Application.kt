@@ -20,7 +20,7 @@ import net.integr.email.CodeStorage
 import net.integr.email.EmailVerificationPiece
 import kotlin.time.Duration.Companion.seconds
 
-//TODO: Scoring, Search, Profile Icons
+//TODO: Scoring, Profile Icons
 fun main() {
     embeddedServer(Tomcat, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
@@ -69,9 +69,7 @@ fun Application.module() {
     }
 
     install(ContentNegotiation) {
-        gson {
-            setPrettyPrinting()
-        }
+        gson {}
     }
 
     install(StatusPages) {

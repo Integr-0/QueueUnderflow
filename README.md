@@ -1,5 +1,6 @@
 # Queue Underflow Internal API Usage
 ## Documentation of Endpoints
+Endpoints always start with /api
 
 ### Signup
 `/signup`
@@ -98,40 +99,7 @@ Tags:
 
 Returns:
 ```json
-[
-  {
-    "id": <ticket id (Long)>,
-    "title": "<title>",
-    "body": "<body>",
-    "author": {
-      "id": <user id (Long)>,
-      "displayName": "<displayname>",
-      "username": "<username>",
-      "creationTime": <user creation time (Long)>
-    },
-    "comments": [<comments>],
-    "score": <score>,
-    "tags": [<tags>],
-    "status": <status>,
-    "createdAt": <ticket creation time (Long)>
-  },
-  {
-    "id": <ticket id (Long)>,
-    "title": "<title>",
-    "body": "<body>",
-    "author": {
-      "id": <user id (Long)>,
-      "displayName": "<displayname>",
-      "username": "<username>",
-      "creationTime": <user creation time (Long)>
-    },
-    "comments": [<comments>],
-    "score": <score>,
-    "tags": [<tags>],
-    "status": <status>,
-    "createdAt": <ticket creation time (Long)>
-  }
-]
+[<tickets>]
 ```
 
 Used to receive a list of tickets. Limit sets the maximum amount of tickets to return. Offset sets the offset from the first ticket in the list that should be returned. the `&nocom` param is optional and indicates that the comments of the tickets should not be sent to optimize page load times.
@@ -164,6 +132,8 @@ Returns:
   },
   "comments": [<comments>],
   "score": <score>,
+  "upVoters": [<user ids>],
+  "downVoters": [<user ids>],
   "tags": [<tags>],
   "status": <status>,
   "createdAt": <ticket creation time (Long)>
@@ -197,6 +167,47 @@ Returns:
   "displayName": "<displayname>",
   "username": "<username>",
   "creationTime": <user creation time (Long)>
+}
+```
+
+### Search
+`/search?query=<query>&limit=<limit>`
+
+Used to search users or tickets. Query needs to be present. Limit limits the amount of results per type and is optional.
+
+Returns:
+```json
+{
+  "tickets": [
+    <tickets>
+  ],
+  "users": [
+    <users>
+  ]
+}
+```
+
+### Upvote
+`/upvote`
+
+Used to upvote a post.
+
+Takes:
+```json
+{
+  "id": <ticket id>
+}
+```
+
+### Downvote
+`/downvote`
+
+Used to downvote a post.
+
+Takes:
+```json
+{
+  "id": <ticket id>
 }
 ```
 

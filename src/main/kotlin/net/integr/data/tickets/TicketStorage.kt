@@ -41,13 +41,7 @@ class TicketStorage {
         }
 
         private fun containsID(id: Long): Boolean {
-            for (ticket in tickets) {
-                if (ticket.id == id) {
-                    return true
-                }
-            }
-
-            return false
+            return getById(id) != null
         }
 
         private fun containsGlobalCommentID(id: Long): Boolean {
@@ -61,13 +55,10 @@ class TicketStorage {
         }
 
         fun getById(id: Long): Ticket? {
-            for (ticket in tickets) {
-                if (ticket.id == id) {
-                    return ticket
-                }
-            }
-
-            return null
+            return tickets.stream()
+                .filter { it.id == id }
+                .findFirst()
+                .orElse(null)
         }
 
         fun getGlobalCommentById(id: Long): Comment? {
@@ -85,6 +76,17 @@ class TicketStorage {
 
         fun getGlobalByID(id: Long): Any? {
             return getById(id) ?: getGlobalCommentById(id)
+        }
+
+        fun getByQuery(query: String, limit: Int = 10): List<Ticket> {
+            return tickets.stream()
+                .filter {
+                    it.title.lowercase().contains(query.lowercase()) ||
+                    it.author.username.lowercase().contains(query.lowercase()) ||
+                    it.author.displayName.lowercase().contains(query.lowercase())
+                }
+                .limit(limit.toLong())
+                .toList()
         }
     }
 }

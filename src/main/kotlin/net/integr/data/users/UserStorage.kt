@@ -45,13 +45,10 @@ class UserStorage {
         }
 
         fun getById(id: Long): ServerUser? {
-            for (user in users) {
-                if (user.user.id == id) {
-                    return user
-                }
-            }
-
-            return null
+            return users.stream()
+                .filter { it.user.id == id }
+                .findFirst()
+                .orElse(null)
         }
 
         fun generateID(): Long {
@@ -65,13 +62,19 @@ class UserStorage {
         }
 
         private fun containsID(id: Long): Boolean {
-            for (user in users) {
-                if (user.user.id == id) {
-                    return true
-                }
-            }
+            return getById(id) != null
+        }
 
-            return false
+        fun getByQuery(query: String, limit: Int = 10): List<User> {
+            return users.stream()
+                .map {it.user}
+                .filter {
+                    it.username.lowercase().contains(query.lowercase()) ||
+                    it.displayName.lowercase().contains(query.lowercase()) ||
+                    it.id.toString() == query
+                }
+                .limit(limit.toLong())
+                .toList()
         }
     }
 }
