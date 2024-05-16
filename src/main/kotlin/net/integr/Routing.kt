@@ -104,7 +104,7 @@ class Api {
                 try {
                     val signupData = call.receiveNullable<SignupData>() // Get the signup json data
 
-                    if (signupData != null && signupData.username.isNotEmpty() && signupData.password.isNotEmpty() && signupData.password.isNotEmpty()) {
+                    if (signupData != null && signupData.username.isNotEmpty() && signupData.username.matches(Regex("[a-z0-9_@]*")) && signupData.username.length >= 2 && signupData.password.isNotEmpty() && signupData.password.isNotEmpty()) {
                         val username = signupData.username
                         if (UserStorage.getFromUsername(username) == null && CodeStorage.getFromUsername(username) == null) {
                             if (username.toCharArray().toList().stream().filter { it.isUpperCase() }.toList().isEmpty()) {
@@ -128,7 +128,7 @@ class Api {
                                 } else call.respond(HttpStatusCode.BadRequest, "Email already exist.")
                             } else call.respond(HttpStatusCode.BadRequest, "Username is not lowercase.")
                         } else call.respond(HttpStatusCode.BadRequest, "Username already exist.")
-                    } else call.respond(HttpStatusCode.BadRequest, "Missing data.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Missing/Invalid data.")
                 } catch (e: NullPointerException) {
                     call.respond(HttpStatusCode.BadRequest, "Missing data.")
                 }
@@ -261,7 +261,7 @@ class Api {
                 val user = call.sessions.get<UserSession>()
                 val creationData = call.receiveNullable<CreateData>() // Get the data
 
-                if (creationData != null && creationData.title.isNotEmpty() && creationData.body.isNotEmpty()) {
+                if (creationData != null && creationData.title.isNotEmpty() && creationData.title.length >= 6 && creationData.body.isNotEmpty() && creationData.body.length >= 10) {
                     if (user != null) {
                         val ticket = Ticket(TicketStorage.generateID(), creationData.title, creationData.body, UserStorage.getById(user.activeUID)!!.user, mutableListOf(), mutableListOf(), mutableListOf(), creationData.tags, Status.unsolved, System.currentTimeMillis()) // Create a new ticket
                         TicketStorage.tickets += ticket

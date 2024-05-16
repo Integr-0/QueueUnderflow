@@ -22,5 +22,17 @@
       "creationTime": 1715670253439
     },
     "isAdmin": false
+  },
+  {
+    "email": "john@gmail.com",
+    "passwordHash": "863887eebe5d41c8582bc129c72d320d6685c63fe086bdc249a169fe88c6669c48a8f159a6a613dbda9bc07b505c67957488d18df636eefff0421df28144a35f",
+    "salt": "a96efc3403584a867a924a196cecc3a573322fe89ba8732af9bd9a45e516ff815be2810b8ed43692dcd30e1c154b2d78d649e93820076e25b366db4ed513a587",
+    "user": {
+      "id": 8817389892,
+      "displayName": "john",
+      "username": "john",
+      "creationTime": 1715882609784
+    },
+    "isAdmin": false
   }
 ]

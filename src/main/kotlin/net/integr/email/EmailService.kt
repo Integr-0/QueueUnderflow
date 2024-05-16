@@ -28,7 +28,7 @@ class EmailService {
                 code = Random.nextInt(1000, 9999)
             }
 
-            return Pair("$root/verify?code=$code", code)
+            return Pair("$root/api/verify?code=$code", code)
         }
 
         fun verifyEmail(email: String): Boolean {

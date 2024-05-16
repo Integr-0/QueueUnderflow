@@ -61,10 +61,11 @@ fun Application.module() {
         val secretEncryptKey = hex(ConfigStorage.INSTANCE!!.sessionEncryptKey)
 
         cookie<UserSession>("session", SessionStorageMemory()) {
-            cookie.secure = true
+            cookie.secure = false
             cookie.path = "/"
             cookie.maxAgeInSeconds = 60*60 // 60 Minutes
             transform(SessionTransportTransformerEncrypt(secretEncryptKey, secretSignKey))
+            cookie.httpOnly = true
         }
     }
 
@@ -108,6 +109,18 @@ fun Application.module() {
 
     install(CORS) {
         anyHost()
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Get)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.SetCookie)
+        allowCredentials = true
+        maxAgeInSeconds = 3600
+        exposeHeader(HttpHeaders.SetCookie)
+        exposeHeader(HttpHeaders.AccessControlAllowCredentials)
+        exposeHeader(HttpHeaders.AccessControlAllowOrigin)
     }
 
     configureRouting()
