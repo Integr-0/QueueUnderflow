@@ -88,15 +88,6 @@ Takes:
 ### Tickets
 `/tickets?limit=<limit>&offset=<offset>&nocom`
 
-Statuses:
-- 2 - Solved
-- 4 - Unsolved
-- 8 - Archived
-
-Tags:
-- 2 - Problem
-- 4 - Question
-
 Returns:
 ```json
 [<tickets>]

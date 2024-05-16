@@ -74,7 +74,7 @@ fun Application.module() {
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respondStatusPage(text = "$cause", status = HttpStatusCode.InternalServerError)
+            call.respondStatusPage(text = "Internal server error", status = HttpStatusCode.InternalServerError)
             cause.printStackTrace()
         }
 
@@ -84,7 +84,7 @@ fun Application.module() {
         }
 
         status(HttpStatusCode.NotFound) { call, status ->
-            call.respondStatusPage(text = "Not Found", status = status)
+            call.respondStatusPage(text = "Not found", status = status)
         }
     }
 
