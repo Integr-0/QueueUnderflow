@@ -41,7 +41,6 @@ val codeRemoverThread = Thread {
 
         if (!newL.containsAll(CodeStorage.awaiting)) {
             CodeStorage.awaiting = newL
-            CodeStorage.save()
         }
 
         Thread.sleep(2000)
@@ -50,7 +49,6 @@ val codeRemoverThread = Thread {
 
 fun Application.module() {
     UserStorage.load()
-    CodeStorage.load()
     TicketStorage.load()
     ConfigStorage.load()
 

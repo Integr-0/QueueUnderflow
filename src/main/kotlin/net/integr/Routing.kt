@@ -12,6 +12,7 @@ import net.integr.Frontend.Companion.routeFrontend
 import net.integr.config.ConfigStorage
 import net.integr.cookie.UserSession
 import net.integr.data.requests.*
+import net.integr.data.requests.responses.CanDeleteResponse
 import net.integr.data.requests.responses.SearchResponse
 import net.integr.data.users.ServerUser
 import net.integr.data.tickets.TicketStorage
@@ -68,6 +69,8 @@ class Api {
 
             routeDownVote()
             routeUpVote()
+
+            routeCanDelete()
         }
 
         @KtorDsl
@@ -121,7 +124,6 @@ class Api {
                                         //EmailService.send(emailVerifyUrl, email) //TODO: Send email instead of printing
 
                                         CodeStorage.awaiting += EmailVerificationPiece(System.currentTimeMillis(), email, emailVerify.second, hashedPassword, salt, username)
-                                        CodeStorage.save()
 
                                         call.respond(HttpStatusCode.OK, "Verification code sent. TEMP: ${emailVerify.first}")
                                     } else call.respond(HttpStatusCode.BadRequest, "Invalid email.")
@@ -147,7 +149,6 @@ class Api {
                             val user = User(UserStorage.generateID(), savedCode.username, savedCode.username, savedCode.creation) // Create user
                             UserStorage.users += ServerUser(savedCode.email, savedCode.hashedPass, savedCode.salt, user, false)
                             CodeStorage.awaiting.remove(savedCode) // Delete code
-                            CodeStorage.save() // Save the data
                             UserStorage.save()
                             call.respond(HttpStatusCode.OK, "User registered.")
                         } else call.respond(HttpStatusCode.BadRequest, "Invalid code.")
@@ -307,7 +308,7 @@ class Api {
                     if (user != null) {
                         val searchedItem = TicketStorage.getGlobalByID(deleteData.id) // Get the item from storage
                         if (searchedItem is Ticket) { // Handle ticket
-                            if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                            if (searchedItem.author.id == user.activeUID || UserStorage.getById(user.activeUID)!!.isAdmin) {
                                 if (searchedItem.status != Status.archived) {
                                     TicketStorage.tickets.remove(searchedItem) // Delete the ticket
                                     TicketStorage.save() // Save the data
@@ -315,7 +316,7 @@ class Api {
                                 } else call.respond(HttpStatusCode.BadRequest, "Ticket is archived.")
                             } else call.respond(HttpStatusCode.BadRequest, "No permission to delete.")
                         } else if (searchedItem is Comment) { // Handle comment
-                            if (searchedItem.author == UserStorage.getById(user.activeUID)!!.user || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                            if (searchedItem.author.id == user.activeUID || UserStorage.getById(user.activeUID)!!.isAdmin) {
                                 val v = TicketStorage.getGlobalByID(searchedItem.parent) // Get the comment parent
                                 if (v is Ticket) {
                                     v.comments.remove(searchedItem) // Delete the comment
@@ -411,6 +412,31 @@ class Api {
                         } else call.respond(HttpStatusCode.BadRequest, "Ticket not found.")
                     } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
                 } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+            }
+        }
+
+        @KtorDsl
+        fun Route.routeCanDelete() {
+            post("/api/candelete") {
+                val user = call.sessions.get<UserSession>()
+                val deleteData = call.receiveNullable<DeleteData>() // Get the user and the item to delete
+
+                if (deleteData != null) {
+                    if (user != null) {
+                        val searchedItem = TicketStorage.getGlobalByID(deleteData.id) // Get the item from storage
+                        if (searchedItem is Ticket) { // Handle ticket
+                            if (searchedItem.author.id == user.activeUID || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                                if (searchedItem.status != Status.archived) {
+                                    call.respond(CanDeleteResponse(true))
+                                } else call.respond(CanDeleteResponse(false))
+                            } else call.respond(CanDeleteResponse(false))
+                        } else if (searchedItem is Comment) { // Handle comment
+                            if (searchedItem.author.id == user.activeUID || UserStorage.getById(user.activeUID)!!.isAdmin) {
+                                call.respond(CanDeleteResponse(true))
+                            } else call.respond(CanDeleteResponse(false))
+                        } else call.respond(HttpStatusCode.BadRequest, "Id was not found.")
+                    } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
+                } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
             }
         }
     }
