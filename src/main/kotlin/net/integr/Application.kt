@@ -108,8 +108,8 @@ fun Application.module() {
     }
 
     install(CORS) {
-        //anyHost()
-        allowHost("localhost:5173", listOf("http"), listOf("/"))
+        anyHost()
+        //allowHost("localhost:5173", listOf("http"), listOf("/"))
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Post)
