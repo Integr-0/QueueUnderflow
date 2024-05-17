@@ -28,7 +28,7 @@ class TicketStorage {
         }
 
         fun getAmount(amount: Int, offset: Int): List<Ticket> {
-            return tickets.sortedBy { it.createdAt }.subList(min(tickets.size, offset), min(tickets.size, offset+amount))
+            return tickets.sortedBy { it.createdAt }.reversed().subList(min(tickets.size, offset), min(tickets.size, offset+amount))
         }
 
         fun generateID(): Long {

@@ -266,7 +266,7 @@ class Api {
                         val ticket = Ticket(TicketStorage.generateID(), creationData.title, creationData.body, UserStorage.getById(user.activeUID)!!.user, mutableListOf(), mutableListOf(), mutableListOf(), creationData.tags, Status.unsolved, System.currentTimeMillis()) // Create a new ticket
                         TicketStorage.tickets += ticket
                         TicketStorage.save() // Save the data
-                        call.respond(HttpStatusCode.OK, "Ticket created.")
+                        call.respond(ticket)
                     } else call.respond(HttpStatusCode.BadRequest, "Not logged in.")
                 } else call.respond(HttpStatusCode.BadRequest, "Invalid data.")
             }

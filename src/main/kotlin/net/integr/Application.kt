@@ -108,19 +108,16 @@ fun Application.module() {
     }
 
     install(CORS) {
-        anyHost()
+        //anyHost()
+        allowHost("localhost:5173", listOf("http"), listOf("/"))
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Get)
-        allowHeader(HttpHeaders.AccessControlAllowOrigin)
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.SetCookie)
+        allowHeader(HttpHeaders.Cookie)
         allowCredentials = true
-        maxAgeInSeconds = 3600
-        exposeHeader(HttpHeaders.SetCookie)
-        exposeHeader(HttpHeaders.AccessControlAllowCredentials)
-        exposeHeader(HttpHeaders.AccessControlAllowOrigin)
     }
 
     configureRouting()
