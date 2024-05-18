@@ -668,8 +668,8 @@
     },
     "comments": [
       {
-        "id": 10024701714,
-        "body": "dfsdfsdf",
+        "id": 98977467258,
+        "body": "Comment\n",
         "author": {
           "id": 8817389892,
           "displayName": "john",
@@ -679,77 +679,8 @@
         "score": 0,
         "comments": [
           {
-            "id": 3580601687,
-            "body": "32423",
-            "author": {
-              "id": 8817389892,
-              "displayName": "john",
-              "username": "john",
-              "creationTime": 1715882609784
-            },
-            "score": 0,
-            "comments": [
-              {
-                "id": 20194159417,
-                "body": "234234\n",
-                "author": {
-                  "id": 8817389892,
-                  "displayName": "john",
-                  "username": "john",
-                  "creationTime": 1715882609784
-                },
-                "score": 0,
-                "comments": [
-                  {
-                    "id": 59596087102,
-                    "body": "34243",
-                    "author": {
-                      "id": 8817389892,
-                      "displayName": "john",
-                      "username": "john",
-                      "creationTime": 1715882609784
-                    },
-                    "score": 0,
-                    "comments": [
-                      {
-                        "id": 82509586131,
-                        "body": "23423423",
-                        "author": {
-                          "id": 8817389892,
-                          "displayName": "john",
-                          "username": "john",
-                          "creationTime": 1715882609784
-                        },
-                        "score": 0,
-                        "comments": [
-                          {
-                            "id": 97284845117,
-                            "body": "23423423",
-                            "author": {
-                              "id": 8817389892,
-                              "displayName": "john",
-                              "username": "john",
-                              "creationTime": 1715882609784
-                            },
-                            "score": 0,
-                            "comments": [],
-                            "parent": 82509586131
-                          }
-                        ],
-                        "parent": 59596087102
-                      }
-                    ],
-                    "parent": 20194159417
-                  }
-                ],
-                "parent": 3580601687
-              }
-            ],
-            "parent": 10024701714
-          },
-          {
-            "id": 10971692358,
-            "body": "324523432",
+            "id": 62381113045,
+            "body": "Lovely comment",
             "author": {
               "id": 8817389892,
               "displayName": "john",
@@ -758,7 +689,7 @@
             },
             "score": 0,
             "comments": [],
-            "parent": 10024701714
+            "parent": 98977467258
           }
         ],
         "parent": 98672064471
@@ -783,120 +714,11 @@
       "username": "john",
       "creationTime": 1715882609784
     },
-    "comments": [
-      {
-        "id": 61487657623,
-        "body": "This is because dotnet is not installed",
-        "author": {
-          "id": 8817389892,
-          "displayName": "john",
-          "username": "john",
-          "creationTime": 1715882609784
-        },
-        "score": 0,
-        "comments": [
-          {
-            "id": 24940158440,
-            "body": "i have dotnet installed though",
-            "author": {
-              "id": 8817389892,
-              "displayName": "john",
-              "username": "john",
-              "creationTime": 1715882609784
-            },
-            "score": 0,
-            "comments": [
-              {
-                "id": 83298692497,
-                "body": "hmm thats strange",
-                "author": {
-                  "id": 8817389892,
-                  "displayName": "john",
-                  "username": "john",
-                  "creationTime": 1715882609784
-                },
-                "score": 0,
-                "comments": [
-                  {
-                    "id": 8999900920,
-                    "body": "yea right?",
-                    "author": {
-                      "id": 8817389892,
-                      "displayName": "john",
-                      "username": "john",
-                      "creationTime": 1715882609784
-                    },
-                    "score": 0,
-                    "comments": [],
-                    "parent": 83298692497
-                  }
-                ],
-                "parent": 24940158440
-              }
-            ],
-            "parent": 61487657623
-          },
-          {
-            "id": 38958374232,
-            "body": "no you do not have the right version",
-            "author": {
-              "id": 8817389892,
-              "displayName": "john",
-              "username": "john",
-              "creationTime": 1715882609784
-            },
-            "score": 0,
-            "comments": [
-              {
-                "id": 4164806053,
-                "body": "what version do i need to get?",
-                "author": {
-                  "id": 8817389892,
-                  "displayName": "john",
-                  "username": "john",
-                  "creationTime": 1715882609784
-                },
-                "score": 0,
-                "comments": [
-                  {
-                    "id": 82767462015,
-                    "body": "you need dotnet 8",
-                    "author": {
-                      "id": 8817389892,
-                      "displayName": "john",
-                      "username": "john",
-                      "creationTime": 1715882609784
-                    },
-                    "score": 0,
-                    "comments": [
-                      {
-                        "id": 10476096657,
-                        "body": "thanks this fixed my issue",
-                        "author": {
-                          "id": 8817389892,
-                          "displayName": "john",
-                          "username": "john",
-                          "creationTime": 1715882609784
-                        },
-                        "score": 0,
-                        "comments": [],
-                        "parent": 82767462015
-                      }
-                    ],
-                    "parent": 4164806053
-                  }
-                ],
-                "parent": 38958374232
-              }
-            ],
-            "parent": 61487657623
-          }
-        ],
-        "parent": 66892365742
-      }
-    ],
+    "comments": [],
     "upVoters": [],
-    "downVoters": [],
+    "downVoters": [
+      8817389892
+    ],
     "tags": [
       2
     ],
@@ -955,7 +777,9 @@
         "parent": 61573110448
       }
     ],
-    "upVoters": [],
+    "upVoters": [
+      8817389892
+    ],
     "downVoters": [],
     "tags": [
       4,
