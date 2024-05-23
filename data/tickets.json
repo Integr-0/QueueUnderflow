@@ -27,7 +27,9 @@
     "upVoters": [
       24474010458
     ],
-    "downVoters": [],
+    "downVoters": [
+      8817389892
+    ],
     "tags": [
       1,
       2
@@ -362,7 +364,9 @@
       "creationTime": 1715670253439
     },
     "comments": [],
-    "upVoters": [],
+    "upVoters": [
+      8817389892
+    ],
     "downVoters": [],
     "tags": [
       1,
@@ -586,8 +590,37 @@
       "username": "erik",
       "creationTime": 1715614312467
     },
-    "comments": [],
-    "upVoters": [],
+    "comments": [
+      {
+        "id": 39670917555,
+        "body": "Indeed",
+        "author": {
+          "id": 8817389892,
+          "displayName": "john",
+          "username": "john",
+          "creationTime": 1715882609784
+        },
+        "score": 0,
+        "comments": [],
+        "parent": 15802032149
+      },
+      {
+        "id": 97926095547,
+        "body": "Agreeing",
+        "author": {
+          "id": 8817389892,
+          "displayName": "john",
+          "username": "john",
+          "creationTime": 1715882609784
+        },
+        "score": 0,
+        "comments": [],
+        "parent": 15802032149
+      }
+    ],
+    "upVoters": [
+      8817389892
+    ],
     "downVoters": [],
     "tags": [
       0,
@@ -626,7 +659,9 @@
       "creationTime": 1715882609784
     },
     "comments": [],
-    "upVoters": [],
+    "upVoters": [
+      8817389892
+    ],
     "downVoters": [],
     "tags": [
       2
@@ -776,7 +811,21 @@
       "username": "john",
       "creationTime": 1715882609784
     },
-    "comments": [],
+    "comments": [
+      {
+        "id": 20948819612,
+        "body": "Yes dont say it",
+        "author": {
+          "id": 8817389892,
+          "displayName": "john",
+          "username": "john",
+          "creationTime": 1715882609784
+        },
+        "score": 0,
+        "comments": [],
+        "parent": 34746562736
+      }
+    ],
     "upVoters": [],
     "downVoters": [],
     "tags": [
