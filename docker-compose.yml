@@ -1,0 +1,16 @@
+version: "3"
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./data/config.json
+        target: /app/data/config.json
+      - type: bind
+        source: ./data/users.json
+        target: /app/data/users.json
+      - type: bind
+        source: ./data/tickets.json
+        target: /app/data/tickets.json

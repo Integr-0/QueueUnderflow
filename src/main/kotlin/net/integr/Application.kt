@@ -22,7 +22,8 @@ import kotlin.time.Duration.Companion.seconds
 
 //TODO: Profile Icons
 fun main() {
-    embeddedServer(Tomcat, port = 8080, host = "0.0.0.0", module = Application::module)
+    val port = System.getenv("PORT")?.toInt() ?: 8080
+    embeddedServer(Tomcat, port = port, host = "localhost", module = Application::module)
         .start(wait = true)
 }
 

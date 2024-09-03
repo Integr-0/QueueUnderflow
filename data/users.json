@@ -34,5 +34,29 @@
       "creationTime": 1715882609784
     },
     "isAdmin": false
+  },
+  {
+    "email": "monkey@monkeymail.com",
+    "passwordHash": "9469b84be549f653812dce46aee185139bdca2f80d1cda375e78665016c429b3c98f6c85e5d063d7976062a4126892af2645cef3c566af963e447ac67d629a53",
+    "salt": "4b52dda2cc81bbb0a752061a34589f8c4ae192b22757b4b8fca97afc8be132b5f10149053d8395f3aaa1757631459da0eabea8d5700d1364eb3c7938597dc995",
+    "user": {
+      "id": 78218875495,
+      "displayName": "monkey",
+      "username": "monkey",
+      "creationTime": 1721490647663
+    },
+    "isAdmin": false
+  },
+  {
+    "email": "test@testmail.com",
+    "passwordHash": "8a887dc673c22732dd84e8417e7ea60c47cad2c1b7db8f0cd0b72412314239897448e919313bc3e825f0290ac60be42521d1de47cc9c8fb8c362c8e9e1a84da5",
+    "salt": "ed43a05f48ec36a85dbb491c3c36c015c9cf79e40c346ad75fd2b0faa14c9f282b604945d8681a79ef6ae9651cf607165893fc532c37766ed299f7da80bba3a3",
+    "user": {
+      "id": 94095049420,
+      "displayName": "test",
+      "username": "test",
+      "creationTime": 1725351715408
+    },
+    "isAdmin": false
   }
 ]
